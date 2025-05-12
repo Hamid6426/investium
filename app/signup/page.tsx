@@ -1,14 +1,16 @@
+"use client";
 import { useState } from "react";
+import axiosInstance from "@/utils/axiosInstance"; // Adjust the import path as needed
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     password: "",
   });
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -17,41 +19,29 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
 
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const { data } = await axiosInstance.post("/api/auth/signup", formData);
+      toast.success(data.message || "Signup successful!");
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        password: "",
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Something went wrong.");
-      } else {
-        setSuccess(data.message || "Signup successful!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
-        });
-      }
-    } catch (err) {
-      setError("An unexpected error occurred.");
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "An unexpected error occurred.";
+      toast.error(errorMsg);
     }
   };
 
   return (
     <div className="signin-container">
       <h1>Sign Up</h1>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -74,6 +64,14 @@ const Signup = () => {
           name="email"
           placeholder="Email"
           value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="phone"
+          placeholder="Phone"
+          value={formData.phone}
           onChange={handleChange}
           required
         />

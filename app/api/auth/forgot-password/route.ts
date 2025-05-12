@@ -1,48 +1,76 @@
-import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 import User from "@/models/User";
-import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+import { passwordResetLimiter } from "@/middlewares/rateLimiters";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    passwordResetLimiter(req);
 
-    if (!email) {
+    const { email, securityAnswer, newPassword } = await req.json();
+
+    if (!email || !securityAnswer || !newPassword) {
       return NextResponse.json(
-        { error: "Email is required." },
+        { error: "All fields are required." },
         { status: 400 }
       );
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
-    // Check if user exists
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user) {
+    if (!isValidEmail(normalizedEmail)) {
       return NextResponse.json(
-        { error: "User with this email does not exist." },
-        { status: 404 }
+        { error: "Invalid email format." },
+        { status: 400 }
       );
     }
 
-    // Generate a secure reset token
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return NextResponse.json({ error: "Email not found." }, { status: 404 });
+    }
 
-    // Save the reset token and its expiration to the user document
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 1000 * 60 * 60 * 24 * 3; // Token valid for 3 days
+    if (!user.securityAnswer) {
+      return NextResponse.json(
+        { error: "Security answer not set." },
+        { status: 400 }
+      );
+    }
+
+    const isMatch = await bcrypt.compare(securityAnswer, user.securityAnswer);
+    if (!isMatch) {
+      return NextResponse.json(
+        { error: "Incorrect security answer." },
+        { status: 400 }
+      );
+    }
+
+    if (newPassword.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters long." },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPassword;
     await user.save();
 
-    // Send the reset token via restAPI and admin will update the password using the token
-    
     return NextResponse.json(
-      { message: "Password reset request sent successfully." },
+      { message: "Password reset successfully." },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Reset password request sending error:", error);
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    const errorMessage =
+      error.message === "Too many password reset attempts. Try again after an hour."
+        ? error.message
+        : "Internal server error.";
+    const status = error.message.includes("Too many") ? 429 : 500;
+
+    console.error("Forgot password error:", error);
+    return NextResponse.json({ error: errorMessage }, { status });
   }
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

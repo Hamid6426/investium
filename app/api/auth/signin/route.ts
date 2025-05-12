@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import connectToDatabase from "@/utils/mongodb";
+import { loginAttemptsLimiter } from "@/middlewares/rateLimiters";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    await loginAttemptsLimiter(req);
 
+    const { email, password } = await req.json();
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email and password are required." },
@@ -16,6 +19,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
+    await connectToDatabase;
     // Check if user exists
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
@@ -34,6 +38,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
     // Generate a JWT token
     const secret = process.env.JWT_SECRET || "your_jwt_secret";
     const token = jwt.sign(

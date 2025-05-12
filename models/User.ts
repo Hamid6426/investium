@@ -1,81 +1,50 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-// Define the User document interface
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: string;
-  phone?: string;
-
+  role: "user" | "admin" | "superadmin";
+  phone: string;
+  securityAnswer?: string | null; // Store the hashed answer or null
   isVerified?: boolean;
+  isBlocked?: boolean;
   verifiedAt?: Date;
-  verificationToken?: string;
-  verificationTokenExpire?: Date;
-
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 }
 
-// Create the User schema
-const UserSchema: Schema = new Schema(
+const UserSchema = new Schema<IUser>(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    name: { type: String, required: true, trim: true },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+    phone: { type: String, required: true },
+    password: { type: String, required: true },
+    securityAnswer: { type: String, default: null },
     role: {
       type: String,
       enum: ["user", "admin", "superadmin"],
-      required: true,
-      default: "receiver",
+      default: "user",
     },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    verifiedAt: {
-      type: Date,
-      default: null,
-    },
-    verificationToken: {
-      type: String,
-      default: null,
-    },
-    verificationTokenExpire: {
-      type: Date,
-      default: null,
-    },
-    phone: {
-      type: String,
-      default: null,
-    },
-    resetPasswordToken: {
-      type: String,
-      default: null,
-    },
-    resetPasswordExpires: {
-      type: Date,
-      default: null,
-    },
+    isVerified: { type: Boolean, default: false }, // will be done by admin manually
+    verifiedAt: Date,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    isBlocked: { type: Boolean, default: false },
   },
-  {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
-  }
+  { timestamps: true }
 );
 
-// Create the User model or reuse the existing one
-export default mongoose.models.User ||
-  mongoose.model<IUser>("User", UserSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+
+export default User;
+
+// If you had to compare yourself to an animal, what would it be and why?
