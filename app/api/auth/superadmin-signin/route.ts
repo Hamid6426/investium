@@ -1,3 +1,4 @@
+// api/auth/superadmin-signin
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
@@ -9,29 +10,29 @@ export async function POST(req: NextRequest) {
   try {
     await loginAttemptsLimiter(req);
 
-    const { email, password } = await req.json();
-    if (!email || !password) {
+    const { email, password, cnic } = await req.json();
+    if (!email || !password || !cnic ) {
       return NextResponse.json(
-        { error: "Email and password are required." },
+        { error: "Email, Password, and CNIC are required." },
         { status: 400 }
       );
     }
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    await connectToDatabase();
+    await connectToDatabase;
     // Check if user exists
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid email or password." },
+        { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
     if (!user.isVerified) {
       return NextResponse.json(
-        { error: "You are not verified by the admin yet. Try again later." },
+        { error: "Account is not verified for super admin" },
         { status: 409 }
       );
     }
@@ -56,7 +57,6 @@ export async function POST(req: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role,
-        isSecured: user.isSecured
       },
       secret,
       { expiresIn: "1h" } // Token expires in 1 hour

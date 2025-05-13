@@ -6,10 +6,13 @@ export interface IUser extends Document {
   password: string;
   role: "user" | "admin" | "superadmin";
   phone: string;
+  dob?: string;
+  cnic?: string;
   securityAnswer?: string | null; // Store the hashed answer or null
-  isVerified?: boolean;
+  isVerified?: boolean | null;
+  isSecured?: boolean | null;
+  verifiedAt?: Date | null;
   isBlocked?: boolean;
-  verifiedAt?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 }
@@ -23,10 +26,11 @@ const UserSchema = new Schema<IUser>(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true,
     },
-    phone: { type: String, required: true },
+    phone: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
+    dob: { type: String },
+    cnic: { type: String },
     securityAnswer: { type: String, default: null },
     role: {
       type: String,
@@ -34,9 +38,8 @@ const UserSchema = new Schema<IUser>(
       default: "user",
     },
     isVerified: { type: Boolean, default: false }, // will be done by admin manually
-    verifiedAt: Date,
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    isSecured: { type: Boolean, default: false }, // after security answer is added
+    verifiedAt: { type: Date, default: null },
     isBlocked: { type: Boolean, default: false },
   },
   { timestamps: true }

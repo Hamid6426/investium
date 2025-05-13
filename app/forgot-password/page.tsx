@@ -5,15 +5,15 @@ import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import Input from "@/components/shared/Input";
 import Button from "@/components/shared/Button";
-import Link from "next/link";
 import Loader from "@/components/shared/Loader";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 
-const SignIn = () => {
+const ForgotPassword = () => {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    securityAnswer: "",
+    newPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -26,34 +26,16 @@ const SignIn = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     try {
-      const res = await axiosInstance.post("/api/auth/signin", formData);
-
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-
-        // Decode the token to get the role
-        const decoded: any = jwtDecode(res.data.token);
-
-        // Navigate based on the role
-        if (decoded.role === "superadmin") {
-          router.push("/superadmin/dashboard");
-        } else if (decoded.role === "admin") {
-          router.push("/admin/dashboard");
-        } else if (decoded.role === "user") {
-          router.push("/dashboard");
-        } else {
-          toast.error("Invalid role.");
-        }
-      }
-
-      toast.success(res.data.message || "Signed in successfully!");
-      router.push("/dashboard");
+      const res = await axiosInstance.post("/api/auth/forgot-password", formData);
+      toast.success(res.data.message || "Password reset successful!");
+      router.push("/signin");
     } catch (err: any) {
       const errorMsg =
         err.response?.data?.error ||
         err.response?.data?.message ||
-        "Login failed.";
+        "Failed to reset password.";
       toast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
@@ -67,7 +49,7 @@ const SignIn = () => {
         className="xs:bg-card xs:border-border xs:border xs:shadow-xl rounded-lg p-4 xs:p-8 space-y-4 w-full max-w-sm mx-auto"
       >
         <h1 className="text-2xl font-bold text-heading mb-4 text-center">
-          Sign In
+          Reset Password
         </h1>
 
         <Input
@@ -81,28 +63,33 @@ const SignIn = () => {
         />
 
         <Input
-          name="password"
-          type="password"
-          label="Password"
-          placeholder="••••••••"
-          value={formData.password}
+          name="securityAnswer"
+          type="text"
+          label="Security Answer"
+          placeholder="e.g. Majestic Eagle"
+          value={formData.securityAnswer}
           onChange={handleChange}
           required
         />
-        <div className="text-sm text-right text-paragraph">
-          <Link href="/forgot-password" className="text-primary hover:underline">
-            Forgot Password?
-          </Link>
-        </div>
+
+        <Input
+          name="newPassword"
+          type="password"
+          label="New Password"
+          placeholder="••••••••"
+          value={formData.newPassword}
+          onChange={handleChange}
+          required
+        />
 
         <Button type="submit">
-          {isSubmitting ? <Loader className="w-6 h-6 mx-auto" /> : "Sign in"}
+          {isSubmitting ? <Loader className="w-6 h-6 mx-auto" /> : "Reset Password"}
         </Button>
 
         <div className="text-sm text-center text-paragraph">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-primary hover:underline">
-            Sign up
+          Remember your password?{" "}
+          <Link href="/signin" className="text-primary hover:underline">
+            Sign In
           </Link>
         </div>
       </form>
@@ -110,4 +97,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;

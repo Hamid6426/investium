@@ -1,48 +1,83 @@
 @import "tailwindcss";
 
-/* THEME
-   primary:    #0ea5e9 (sky-500)
-   secondary:  #38bdf8 (sky-400)
-   accent:     #0284c7 (sky-600)
-   heading:    #1f2937 (gray-800)
-   paragraph:  #374151 (gray-700)
-   background: #ffffff (white)
-   card:       #f9fafb (gray-50)
-   success:    #22c55e (green-500)
-   error:      #ef4444 (red-500)
-   gradient:   (#38bdf8 -> #0284c7) (bg-gradient-to-r from-sky-400 to-sky-600)
-*/
-
-/* @theme {} */
-
-@layer base {
-  /* Light Theme: default when no data-theme attribute is set */
-  :root,
-  [data-theme="light"] {
-    /* Mirror the @theme vars to CSS variables for inline/use outside utilities */
-    --color-primary:    #0ea5e9;
-    --color-secondary:  #38bdf8;
-    --color-accent:     #0284c7;
-    --color-heading:    #1f2937;
-    --color-paragraph:  #374151;
-    --color-background: #ffffff;
-    --color-card:       #f9fafb;
-    --color-success:    #22c55e;
-    --color-error:      #ef4444;
-    --gradient-primary: linear-gradient(to right, #38bdf8, #0284c7);
-  }
-
-  /* Dark Theme: applied when data-theme="dark" */
-  [data-theme="dark"] {
-    --color-primary:    #0ea5e9;   /* keep accent consistent */
-    --color-secondary:  #38bdf8;
-    --color-accent:     #0284c7;
-    --color-heading:    #f9fafb;   /* light headings on dark bg */
-    --color-paragraph:  #ffffff;   /* white body text */
-    --color-background: #1f2937;   /* dark background */
-    --color-card:       #374151;   /* dark card bg */
-    --color-success:    #22c55e;
-    --color-error:      #ef4444;
-    --gradient-primary: linear-gradient(to right, #38bdf8, #0284c7);
-  }
+html,
+body {
+  scroll-behavior: smooth;
 }
+
+/* Default Theme (applied when no data-theme is set or data-theme="light") */
+@theme {
+  --breakpoint-3xs: 16rem;
+  --breakpoint-2xs: 24rem;
+  --breakpoint-xs: 32rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+  --breakpoint-3xl: 112rem;
+  --breakpoint-4xl: 128rem;
+  --breakpoint-5xl: 144rem;
+  --breakpoint-6xl: 160rem;
+
+  /* THIS IS LIGHT THEME */
+  --color-primary: #0ea5e9;    /* Sky Blue */
+  --color-secondary: #7dd3fc;  /* Light Sky Blue */
+  --color-accent: #0f766e;     /* Teal Green */
+  --color-heading: #0f172a;    /* Slate-900 */
+  --color-paragraph: #334155;  /* Slate-700 */
+  --color-muted: #94a3b8;      /* Slate-400 */
+  --color-background: #f8fafc; /* Slate-50 */
+  --color-card: #ffffff;       /* White */
+  --color-success: #22c55e;    /* Green-500 */
+  --color-error: #ef4444;      /* Red-500 */
+  --color-border: #e2e8f0;     /* Slate-200 */
+  --color-warning: #f59e0b;    /* Amber-500 */
+  --color-info: #3b82f6;       /* Blue-500 */
+  --color-disabled: #cbd5e1;   /* Slate-300 */
+  --color-overlay: #00000040;  /* 25% Black */
+} 
+
+[data-theme="dark"] {
+  --color-primary: #0ea5e9;     /* Sky Blue */
+  --color-secondary: #0284c7;   /* Cyan-700 */
+  --color-accent: #0f766e;      /* Teal-700 */
+  --color-heading: #f1f5f9;     /* Slate-100 */
+  --color-paragraph: #cbd5e1;   /* Slate-300 */
+  --color-muted: #64748b;       /* Slate-500 */
+  --color-background: #0f172a;  /* Slate-900 */
+  --color-card: #1e293b;        /* Slate-800 */
+  --color-success: #16a34a;     /* Green-600 */
+  --color-error: #dc2626;       /* Red-600 */
+  --color-border: #334155;      /* Slate-700 */
+  --color-warning: #facc15;     /* Yellow-400 */
+  --color-info: #60a5fa;        /* Blue-400 */
+  --color-disabled: #475569;    /* Slate-600 */
+  --color-overlay: #00000080;   /* 50% Black */
+}
+
+
+[data-theme="ocean"] {
+  --color-primary: #0ea5e9;     /* Sky Blue */
+  --color-secondary: #38bdf8;   /* Light Blue */
+  --color-accent: #0e7490;      /* Cyan-800 */
+  --color-heading: #082f49;     /* Deep Navy */
+  --color-paragraph: #0c4a6e;   /* Dark Cyan */
+  --color-muted: #94a3b8;       /* Slate-400 */
+  --color-background: #e0f2fe;  /* Sky-100 */
+  --color-card: #f0f9ff;        /* Sky-50 */
+  --color-success: #10b981;     /* Emerald-500 */
+  --color-error: #f43f5e;       /* Rose-500 */
+  --color-border: #bae6fd;      /* Sky-200 */
+  --color-warning: #fbbf24;     /* Amber-400 */
+  --color-info: #0ea5e9;        /* Sky Blue */
+  --color-disabled: #cbd5e1;    /* Slate-300 */
+  --color-overlay: #0c4a6e99;   /* Semi-transparent Cyan */
+}
+
+/* FOR TOGGLE OF LIGHT AND DARK e.g dark: is dark and without dark: is light */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
+
+/* IF SOMETHING IS NOT IN THE PALLETE use dark: or ocean: or any additional theme */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant ocean (&:where([data-theme="ocean"], [data-theme="ocean"] *));

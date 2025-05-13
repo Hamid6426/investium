@@ -4,6 +4,9 @@ import "./globals.css";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Navbar from "@/components/Navbar";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,12 +37,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
   }, []);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ToastContainer position="top-right" />
-        {children}
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="system"
+          enableSystem
+        >
+          <AuthProvider>
+            <ToastContainer position="top-right" />
+            <Navbar />
+            <main className="min-h-dvh bg-gray-100 dark:bg-gray-900">
+              {children}
+            </main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

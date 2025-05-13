@@ -3,6 +3,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { getUserFromRequest } from "@/utils/getUserFromRequest";
 import connectToDatabase from "@/utils/mongodb";
+import jwt from "jsonwebtoken"; // Import the jwt library to generate new tokens
 
 // POST: Set a security question (can only be done once)
 export async function POST(req: NextRequest) {
@@ -12,6 +13,13 @@ export async function POST(req: NextRequest) {
     if (!securityAnswer) {
       return NextResponse.json(
         { error: "Security answer is required." },
+        { status: 400 }
+      );
+    }
+
+    if (!securityAnswer.trim()) {
+      return NextResponse.json(
+        { error: "Answer cannot be empty or just spaces." },
         { status: 400 }
       );
     }
@@ -36,13 +44,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Step 4: Hash and save
+    // Step 4: Hash and save the security answer
     const hashedAnswer = await bcrypt.hash(securityAnswer, 12);
     user.securityAnswer = hashedAnswer;
+    user.isSecured = true;
     await user.save();
 
+    // Step 5: Generate a new token with updated user information
+    const updatedToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role, // Assuming role is part of your user model
+        isSecured: user.isSecured, // Now we know if account is secured or not
+      },
+      process.env.JWT_SECRET as string, // Replace with your actual JWT secret
+      { expiresIn: "1d" } // Token expiration time (e.g., 1 day)
+    );
+
+    // Return the success message along with the updated token
     return NextResponse.json({
       message: "Security answer set successfully.",
+      token: updatedToken, // Return the updated token
     });
   } catch (error) {
     console.error("Security question error:", error);

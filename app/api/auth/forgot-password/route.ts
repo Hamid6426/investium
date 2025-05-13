@@ -51,6 +51,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const isSameAsOld = await bcrypt.compare(newPassword, user.password);
+    if (isSameAsOld) {
+      return NextResponse.json(
+        { error: "New password should be different from the old one." },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     user.password = hashedPassword;
     await user.save();
@@ -61,7 +69,8 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     const errorMessage =
-      error.message === "Too many password reset attempts. Try again after an hour."
+      error.message ===
+      "Too many password reset attempts. Try again after an hour."
         ? error.message
         : "Internal server error.";
     const status = error.message.includes("Too many") ? 429 : 500;
