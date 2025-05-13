@@ -64,7 +64,7 @@ const SignIn = () => {
     <main className="py-12 w-full bg-background min-h-screen flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="xs:bg-card xs:border-border xs:border xs:shadow-xl rounded-lg p-4 xs:p-8 space-y-4 w-full max-w-sm mx-auto"
+        className="rounded-lg p-4 space-y-4 w-full max-w-sm mx-auto"
       >
         <h1 className="text-2xl font-bold text-heading mb-4 text-center">
           Sign In
@@ -90,7 +90,10 @@ const SignIn = () => {
           required
         />
         <div className="text-sm text-right text-paragraph">
-          <Link href="/forgot-password" className="text-primary hover:underline">
+          <Link
+            href="/forgot-password"
+            className="text-primary hover:underline"
+          >
             Forgot Password?
           </Link>
         </div>

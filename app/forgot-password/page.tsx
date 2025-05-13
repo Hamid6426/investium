@@ -9,6 +9,16 @@ import Loader from "@/components/shared/Loader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+const generateRandomPassword = () => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let password = "";
+  for (let i = 0; i < 8; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+};
+
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -17,10 +27,29 @@ const ForgotPassword = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleGeneratePassword = () => {
+    const newPass = generateRandomPassword();
+    setFormData((prev) => ({ ...prev, newPassword: newPass }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
+
+  const handleCopyPassword = () => {
+    if (formData.newPassword.trim() === "") {
+      toast.warn("Password field is empty.");
+      return;
+    }
+    navigator.clipboard.writeText(formData.newPassword);
+    toast.success("Password copied to clipboard!");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +57,10 @@ const ForgotPassword = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await axiosInstance.post("/api/auth/forgot-password", formData);
+      const res = await axiosInstance.post(
+        "/api/auth/forgot-password",
+        formData
+      );
       toast.success(res.data.message || "Password reset successful!");
       router.push("/signin");
     } catch (err: any) {
@@ -46,7 +78,7 @@ const ForgotPassword = () => {
     <main className="py-12 w-full bg-background min-h-screen flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="xs:bg-card xs:border-border xs:border xs:shadow-xl rounded-lg p-4 xs:p-8 space-y-4 w-full max-w-sm mx-auto"
+        className="rounded-lg p-4 space-y-4 w-full max-w-sm mx-auto"
       >
         <h1 className="text-2xl font-bold text-heading mb-4 text-center">
           Reset Password
@@ -74,16 +106,36 @@ const ForgotPassword = () => {
 
         <Input
           name="newPassword"
-          type="password"
+          type={isPasswordVisible ? "text" : "password"}
           label="New Password"
           placeholder="••••••••"
           value={formData.newPassword}
           onChange={handleChange}
           required
+          showPasswordToggle={true}
+          onToggleVisibility={togglePasswordVisibility}
+          onCopyClick={handleCopyPassword}
         />
 
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">
+            Need a strong one?
+          </span>
+          <button
+            type="button"
+            onClick={handleGeneratePassword}
+            className="text-sm text-primary hover:underline"
+          >
+            Generate Random Password
+          </button>
+        </div>
+
         <Button type="submit">
-          {isSubmitting ? <Loader className="w-6 h-6 mx-auto" /> : "Reset Password"}
+          {isSubmitting ? (
+            <Loader className="w-6 h-6 mx-auto" />
+          ) : (
+            "Reset Password"
+          )}
         </Button>
 
         <div className="text-sm text-center text-paragraph">

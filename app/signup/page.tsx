@@ -20,6 +20,30 @@ const Signup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const router = useRouter();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
+
+  const handleCopyPassword = () => {
+    if (formData.password.trim() === "") {
+      toast.warn("Password field is empty.");
+      return;
+    }
+    navigator.clipboard.writeText(formData.password);
+    toast.success("Password copied to clipboard!");
+  };
+
+  const generateRandomPassword = () => {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let password = "";
+    for (let i = 0; i < 8; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData((prev) => ({ ...prev, password }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -78,12 +102,14 @@ const Signup = () => {
         </div>
       )}
 
-      <main className="py-12 w-full bg-background">
+      <main className="py-12 w-full bg-background min-h-screen flex items-center justify-center">
         <form
           onSubmit={handleSubmit}
-          className="bg-card border border-border shadow-xl rounded-lg p-4 xs:p-8 space-y-4 w-full max-w-sm mx-auto"
+          className="rounded-lg p-4 space-y-4 w-full max-w-sm mx-auto"
         >
-          <h1 className="text-2xl font-bold text-heading mb-4 text-center">Sign Up</h1>
+          <h1 className="text-2xl font-bold text-heading mb-4 text-center">
+            Sign Up
+          </h1>
 
           <Input
             name="firstName"
@@ -121,24 +147,37 @@ const Signup = () => {
           />
           <Input
             name="password"
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             label="Password"
             placeholder="••••••••"
             value={formData.password}
             onChange={handleChange}
             required
+            showPasswordToggle={true}
+            onToggleVisibility={togglePasswordVisibility}
+            onCopyClick={handleCopyPassword}
           />
 
-          <Button type="submit" variant="error" >
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
+              Need a strong one?
+            </span>
+            <button
+              type="button"
+              onClick={generateRandomPassword}
+              className="text-sm text-primary hover:underline"
+            >
+              Generate Random Password
+            </button>
+          </div>
+
+          <Button type="submit" variant="primary">
             {isSubmitting ? <Loader className="w-6 h-6 mx-auto" /> : "Sign up"}
           </Button>
 
           <div className="text-sm text-center text-paragraph">
-            Already have an account?
-            <Link
-              href="/signin"
-              className="text-primary hover:underline"
-            >
+            Already have an account?{" "}
+            <Link href="/signin" className="text-primary hover:underline">
               Sign in
             </Link>
           </div>
