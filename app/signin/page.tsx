@@ -34,6 +34,7 @@ const SignIn = () => {
 
         // Decode the token to get the role
         const decoded: any = jwtDecode(res.data.token);
+        toast.success(res.data.message || "Signed in successfully!");
 
         // Navigate based on the role
         if (decoded.role === "superadmin") {
@@ -46,9 +47,6 @@ const SignIn = () => {
           toast.error("Invalid role.");
         }
       }
-
-      toast.success(res.data.message || "Signed in successfully!");
-      router.push("/dashboard");
     } catch (err: any) {
       const errorMsg =
         err.response?.data?.error ||

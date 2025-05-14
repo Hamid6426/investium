@@ -1,4 +1,3 @@
-// components/ThemeToggle.tsx
 "use client";
 
 import { useTheme } from "next-themes";
@@ -9,7 +8,6 @@ export default function ThemeToggle() {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -17,30 +15,41 @@ export default function ThemeToggle() {
   if (!mounted) return null;
 
   const currentTheme = theme === "system" ? systemTheme : theme;
+  const isDark = currentTheme === "dark";
 
   return (
     <div className="flex">
-      <button
-        onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-        className={`w-12 h-6 rounded-full hidden cursor-pointer sm:flex p-1 transition-colors duration-300 ${
-          currentTheme === "dark" ? "bg-gray-800" : "bg-gray-200"
+      {/* Toggle Switch for sm+ */}
+      {/* <button
+        onClick={() => setTheme(isDark ? "light" : "dark")}
+        className={`w-12 h-6 rounded-full hidden sm:flex items-center p-1 cursor-pointer transition-colors duration-300 ${
+          isDark ? "bg-muted" : "bg-card"
         }`}
       >
         <div
           className={`h-4 w-4 rounded-full shadow-md transform transition-transform duration-300 ${
-            currentTheme === "dark" ? "translate-x-6 bg-sky-500" : "translate-x-0 bg-sky-500"
+            isDark ? "translate-x-6 bg-primary" : "translate-x-0 bg-primary"
           }`}
         ></div>
-      </button>
+      </button> */}
 
-      <button
-        onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-        className="transition-colors flex flex-col justify-center items-center p-2 sm:hidden cursor-pointer duration-300"
+      {/* Icon Toggle for xs */}
+      {/* <button
+        onClick={() => setTheme(isDark ? "light" : "dark")}
+        className="transition-colors flex flex-col justify-center items-center p-2 sm:hidden cursor-pointer duration-300 text-paragraph"
       >
         <div>
-          {currentTheme === "dark" ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}
+          {isDark ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}
         </div>
-        <div className="text-xs">{currentTheme === "dark" ? "Dark" : "Light"}</div>
+      </button> */}
+ 
+       <button
+        onClick={() => setTheme(isDark ? "light" : "dark")}
+        className="transition-colors flex flex-col justify-center items-center p-2 cursor-pointer duration-300 text-paragraph"
+      >
+        <div>
+          {isDark ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}
+        </div>
       </button>
     </div>
   );

@@ -27,10 +27,25 @@ function normalizePhone(phone: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { firstName, lastName, email, password, phone } = await req.json();
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      agreedToTerms,
+      referralCode,
+    } = await req.json();
 
     // Basic field presence check
-    if (!firstName || !lastName || !email || !password || !phone) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password ||
+      !phone ||
+      !agreedToTerms
+    ) {
       return NextResponse.json(
         { error: "All fields are required." },
         { status: 400 }
@@ -83,6 +98,8 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       password: hashedPassword,
       phone: normalizedPhone, // Save the normalized phone number
+      agreedToTerms,
+      referralCode: referralCode || null,
     });
 
     return NextResponse.json(

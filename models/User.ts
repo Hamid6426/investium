@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password: string;
   role: "user" | "admin" | "superadmin";
   phone: string;
+  agreedToTerms: boolean;
+  referralCode: string;
   dob?: string;
   cnic?: string;
   securityAnswer?: string | null; // Store the hashed answer or null
@@ -28,7 +30,12 @@ const UserSchema = new Schema<IUser>(
       trim: true,
     },
     phone: { type: String, required: true, unique: true, trim: true },
+    agreedToTerms: { type: Boolean, required: true, default: false },
     password: { type: String, required: true },
+    referralCode: {
+      type: String,
+      default: null,
+    },
     dob: { type: String },
     cnic: { type: String },
     securityAnswer: { type: String, default: null },

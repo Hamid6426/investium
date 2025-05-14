@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const excludedBasePaths = ["/donor", "/receiver", "/admin", "/chats"];
+  const excludedBasePaths = ["/dashboard", "/admin", "/chats"];
   const shouldHideNavbar = excludedBasePaths.some((basePath) =>
     pathname.startsWith(basePath)
   );
@@ -23,7 +23,7 @@ export default function Navbar() {
     { label: "HOME", path: "/" },
     { label: "ABOUT", path: "/about" },
     { label: "CONTACT", path: "/contact" },
-    { label: "LISTING", path: "/listing" },
+    { label: "DASHBOARD", path: "/dashboard" },
   ];
 
   return (

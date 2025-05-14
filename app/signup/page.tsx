@@ -16,6 +16,8 @@ const Signup = () => {
     email: "",
     phone: "",
     password: "",
+    agreedToTerms: false,
+    referralCode: "", // Added referralCode to the form data
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -35,24 +37,23 @@ const Signup = () => {
     toast.success("Password copied to clipboard!");
   };
 
-  const generateRandomPassword = () => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let password = "";
-    for (let i = 0; i < 8; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setFormData((prev) => ({ ...prev, password }));
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    if (!formData.agreedToTerms) {
+      toast.error("You must agree to the Terms and Privacy Policy.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const res = await axiosInstance.post("/api/auth/signup", formData);
@@ -64,6 +65,8 @@ const Signup = () => {
         email: "",
         phone: "",
         password: "",
+        agreedToTerms: false,
+        referralCode: "", // Reset referralCode after successful sign-up
       });
       setShowSuccessModal(true);
       // router.push("/signin"); // Commenting out immediate push as per modal message
@@ -158,17 +161,41 @@ const Signup = () => {
             onCopyClick={handleCopyPassword}
           />
 
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              Need a strong one?
-            </span>
-            <button
-              type="button"
-              onClick={generateRandomPassword}
-              className="text-sm text-primary hover:underline"
-            >
-              Generate Random Password
-            </button>
+          {/* Optional Referral Code Input */}
+          <Input
+            name="referralCode"
+            label="Referral Code (Optional)"
+            placeholder="Enter referral code"
+            value={formData.referralCode}
+            onChange={handleChange}
+          />
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="terms"
+              name="agreedToTerms"
+              checked={formData.agreedToTerms}
+              onChange={handleChange}
+              className="mr-4"
+              required
+            />
+            <label htmlFor="terms" className="text-sm text-muted-foreground">
+              I agree with{" "}
+              <Link
+                href="/privacy-policy"
+                className="text-primary hover:text-accent"
+              >
+                Privacy Policy
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/terms-and-conditions"
+                className="text-primary hover:text-accent"
+              >
+                Terms & Condition
+              </Link>
+            </label>
           </div>
 
           <Button type="submit" variant="primary">
