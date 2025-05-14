@@ -33,4 +33,3 @@ As a user, you will:
 - There is no automated transaction method, the admin will handle it
 - Users manually deposit funds, which are verified and invested by the admin.
 - Similarly, when users withdraw funds, the admin verifies the request and transfers the amount from their account.
-- Enjoy a seamless and secure experience tailored to your financial needs.

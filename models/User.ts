@@ -8,31 +8,31 @@ const UserSchema = new Schema<IUser>(
     phone: { type: String, required: true, unique: true, trim: true },
     agreedToTerms: { type: Boolean, required: true, default: false },
     password: { type: String, required: true },
-    referralCode: { type: String, default: null },
-    dob: { type: String },
-    cnic: { type: String },
-    securityAnswer: { type: String, default: null },
-    role: {
-      type: String,
-      enum: ["user", "admin", "superadmin"],
-      default: "user",
-    },
-    isVerified: { type: Boolean, default: false },
+    role: { type: String, enum: ["user", "admin", "superadmin"], default: "user" },
+    image: String,
+    dob: String,
+    cnic: String,
+    walletBalance: { type: Number, default: 0 },
     isSecured: { type: Boolean, default: false },
-    verifiedAt: { type: Date, default: null },
+    securityAnswer: { type: String, default: null },
     isBlocked: { type: Boolean, default: false },
-    payoutDetails: {
-      method: {
-        type: String,
-        enum: ["bank", "easypaisa", "jazzcash"],
-        required: true,
-      },
-      accountName: { type: String },
-      accountNumber: { type: String },
-    },
+    blockReason: { type: String, default: null },
+    referralCode: { type: String, default: null, unique: true },
+    referredBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    referralEffectExpired: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 export default User;
+
+// HOW TO USE REFER BONUS
+// if (user.referredBy) {
+//   const referrer = await User.findById(user.referredBy);
+
+//   if (referrer.referralEffectExpired > new Date()) {
+//     // Give referrer 10% of user's earnings
+//   }
+// }

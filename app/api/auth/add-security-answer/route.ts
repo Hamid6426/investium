@@ -54,8 +54,6 @@ export async function POST(req: NextRequest) {
     const updatedToken = jwt.sign(
       {
         id: user._id,
-        email: user.email,
-        role: user.role, // Assuming role is part of your user model
         isSecured: user.isSecured, // Now we know if account is secured or not
       },
       process.env.JWT_SECRET as string, // Replace with your actual JWT secret

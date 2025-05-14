@@ -29,13 +29,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!user.isVerified) {
-      return NextResponse.json(
-        { error: "You are not verified by the admin yet. Try again later." },
-        { status: 409 }
-      );
-    }
-
     // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -53,8 +46,6 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(
       {
         id: user._id,
-        name: user.name,
-        email: user.email,
         role: user.role,
         isSecured: user.isSecured
       },

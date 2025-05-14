@@ -1,29 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
+import { IUser } from "@/models/models.types";
 import bcrypt from "bcryptjs";
 import connectToDatabase from "@/utils/mongodb";
-
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isValidPhone(phone: string): boolean {
-  // Ensure the phone number starts with +92 and is followed by 9 digits
-  return /^\+92\d{10}$/.test(phone);
-}
-
-function normalizePhone(phone: string): string {
-  // Trim the phone number to remove any extra spaces
-  let normalized = phone.trim();
-
-  // If the number starts with '0', remove the leading '0' and add the country code +92
-  if (normalized.startsWith("0")) {
-    normalized = normalized.slice(1); // Remove the leading '0'
-  }
-
-  // Add the Pakistan country code +92
-  return `+92${normalized}`;
-}
+import mongoose from "mongoose";
+import {
+  isValidPhone,
+  isValidEmail,
+  randomString,
+  normalizePhone,
+} from "@/utils/validations";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +20,7 @@ export async function POST(req: NextRequest) {
       password,
       phone,
       agreedToTerms,
-      referralCode,
+      referralCode: incomingCode,
     } = await req.json();
 
     // Basic field presence check
@@ -44,7 +30,7 @@ export async function POST(req: NextRequest) {
       !email ||
       !password ||
       !phone ||
-      !agreedToTerms
+      agreedToTerms !== true
     ) {
       return NextResponse.json(
         { error: "All fields are required." },
@@ -52,11 +38,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const trimmedFirstName = firstName.trim();
-    const trimmedLastName = lastName.trim();
     const normalizedEmail = email.trim().toLowerCase();
-    const trimmedPhone = phone.trim();
-
     if (!isValidEmail(normalizedEmail)) {
       return NextResponse.json(
         { error: "Invalid email format." },
@@ -64,9 +46,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Normalize phone number (removes leading zero and adds +92)
-    const normalizedPhone = normalizePhone(trimmedPhone);
-
+    const normalizedPhone = normalizePhone(phone);
     if (!isValidPhone(normalizedPhone)) {
       return NextResponse.json(
         { error: "Invalid phone number." },
@@ -81,29 +61,74 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 2. Connect & uniqueness check
     await connectToDatabase();
-
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
+    if (await User.exists({ email: normalizedEmail })) {
       return NextResponse.json(
         { error: "Email already in use." },
         { status: 409 }
       );
     }
+    // 3. Handle incoming referral
+    let referrer: IUser | null = null;
+    if (incomingCode) {
+      referrer = await User.findOne({ referralCode: incomingCode });
+      if (!referrer) {
+        return NextResponse.json(
+          { error: "Invalid referral code." },
+          { status: 400 }
+        );
+      }
+    }
 
+    async function generateUniqueReferralCode(email: string): Promise<string> {
+      const prefix = email.split("@")[0];
+      let code: string;
+      do {
+        code = `${prefix}-${randomString(6)}`;
+      } while (await User.exists({ referralCode: code }));
+      return code;
+    }
+
+    // 4. Generate this user’s own referral code
+    const myReferralCode = await generateUniqueReferralCode(normalizedEmail);
+
+    // 5. Create user
     const hashedPassword = await bcrypt.hash(password, 12);
+    const now = new Date();
+    const effectUntil = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    await User.create({
-      name: `${trimmedFirstName} ${trimmedLastName}`,
+    const newUser = (await User.create({
+      name: `${firstName.trim()} ${lastName.trim()}`,
       email: normalizedEmail,
       password: hashedPassword,
-      phone: normalizedPhone, // Save the normalized phone number
+      phone: normalizedPhone,
       agreedToTerms,
-      referralCode: referralCode || null,
-    });
+      referralCode: myReferralCode,
+      referredBy: referrer ? referrer._id : null,
+    })) as IUser & { _id: mongoose.Types.ObjectId };
+
+    // 6. Update referrer (if any)
+    if (referrer) {
+      // Set or extend the referrer’s benefit window
+      const now = new Date();
+      const newEffect = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 DAYS EXTA 10% BONUS FOR THE REFERREE
+
+      // Optional: Only extend if it's shorter
+      if (
+        !referrer.referralEffectExpired ||
+        referrer.referralEffectExpired < newEffect
+      ) {
+        referrer.referralEffectExpired = newEffect;
+        await referrer.save();
+      }
+    }
 
     return NextResponse.json(
-      { message: "User registered successfully." },
+      {
+        message: "User registered successfully.",
+        referralCode: myReferralCode,
+      },
       { status: 201 }
     );
   } catch (error) {

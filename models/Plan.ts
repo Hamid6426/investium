@@ -1,33 +1,17 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IPlan } from "./models.types";
 
-const PlanSchema = new Schema<IPlan>(
+const planSchema = new Schema<IPlan>(
   {
-    name: { type: String, required: true, unique: true },
-    description: { type: String, required: true },
-    image: { type: String, required: true },
-    rupees: { type: Number, required: true },
-    dailyReturn: { type: Number, required: true },
-    totalRevenue: { type: Number, required: true },
-    capitalReturn: { type: Boolean, required: true },
-    returnType: { type: String, required: true },
-    periodType: {
-      type: String,
-      enum: ["daily", "weekly", "monthly", "yearly"],
-      required: true,
-    },
+    name: { type: String, required: true },
+    description: { type: String },
+    baseInvestedAmount: { type: Number, required: true },
+    dailyReturned: { type: Number, required: true },
     totalPeriods: { type: Number, required: true },
-    cancellation: { type: Boolean, default: false },
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "active",
-    },
-    isFeatured: { type: Boolean, default: false },
+    cancellation: { type: Boolean, required: true },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-const Plan: Model<IPlan> = mongoose.models.Plan || mongoose.model<IPlan>("Plan", PlanSchema);
-export default Plan;
-  
+export const Plan = mongoose.models.Plan || mongoose.model<IPlan>("Plan", planSchema);
