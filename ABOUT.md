@@ -29,8 +29,8 @@ As a user, you will:
   - Wallet Exchange
   - A "Load More" button spanning the entire column for additional options.
 
-- The user only have to add the bank or easypaisa details to which the investment will be sent to.
-- There is no automated transaction method
+- The user only have to add the bank or easypaisa details to which the withdrawn money will be sent to.
+- There is no automated transaction method, the admin will handle it
 - Users manually deposit funds, which are verified and invested by the admin.
 - Similarly, when users withdraw funds, the admin verifies the request and transfers the amount from their account.
 - Enjoy a seamless and secure experience tailored to your financial needs.
