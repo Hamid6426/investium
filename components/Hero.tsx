@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="w-full py-32 px-6 bg-background">
+    <section className="w-full pt-24 px-6 bg-background">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="px-4 py-2 bg-[#FFFFFF20] mb-4 text-heading max-w-xs font-semibold mx-auto">
           Smart Choices, Wealthy Tomrrow
