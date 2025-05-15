@@ -5,6 +5,7 @@ const planSchema = new Schema<IPlan>(
   {
     name: { type: String, required: true },
     description: { type: String },
+    image: { type: String },
     baseInvestedAmount: { type: Number, required: true },
     dailyReturned: { type: Number, required: true },
     totalPeriods: { type: Number, required: true },
@@ -14,4 +15,5 @@ const planSchema = new Schema<IPlan>(
   { timestamps: true }
 );
 
-export const Plan = mongoose.models.Plan || mongoose.model<IPlan>("Plan", planSchema);
+export const Plan =
+  mongoose.models.Plan || mongoose.model<IPlan>("Plan", planSchema);

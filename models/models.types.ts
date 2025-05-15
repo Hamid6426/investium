@@ -35,6 +35,7 @@ export interface IPlan extends Document {
   totalPeriods: number; // Total number of days the investment runs (e.g., 90 days)
   cancellation: boolean; // Indicates if the plan allows cancellation
   isActive: boolean; // default: true
+  image: string;
 }
 
 /**
