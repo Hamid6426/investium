@@ -47,11 +47,12 @@ export interface IDeposit extends Document {
   accountNumber: string; // Account number used for the deposit
   amount: number; // Amount deposited by the user
   currency: string; // Currency of the deposited amount
-  proofImage?: string; // URL or path to the proof of deposit image (e.g., screenshot)
-  proofImageVerified?: boolean; // Indicates if the proof image has been verified by an admin
+  proofImage: string; // URL or path to the proof of deposit image (e.g., screenshot)
+  proofImageVerified: boolean; // Indicates if the proof image has been verified by an admin
   method: "bank" | "easypaisa" | "jazzcash"; // Method of deposit
   status: "pending" | "completed" | "failed"; // Status of the deposit
-  modifiedBy?: mongoose.Types.ObjectId; // Admin who modified the status of the deposit
+  adminNotes?: string; // Reason as to why deposit is rejected
+  modifiedBy: mongoose.Types.ObjectId; // Admin who modified the status of the deposit
 }
 
 /**
@@ -69,7 +70,7 @@ export interface IInvestment extends Document {
 /**
  * IWithdrawalRequest interface represents the schema for a user's withdrawal request.
  */
-export interface IWithdrawalRequest extends Document {
+export interface IWithdrawal extends Document {
   userId: mongoose.Types.ObjectId; // Reference to the user making the withdrawal request
   accountName: string; // Account name where the withdrawal will be sent
   accountNumber: string; // Account number where the withdrawal will be sent

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import { IInvestment } from "./models.types";
 
 const investmentSchema = new Schema<IInvestment>(
@@ -13,4 +13,7 @@ const investmentSchema = new Schema<IInvestment>(
   { timestamps: true }
 );
 
-export const Investment = mongoose.models.Investment || mongoose.model<IInvestment>("Investment", investmentSchema);
+const Investment: Model<IInvestment> =
+  mongoose.models.Investment ||
+  mongoose.model<IInvestment>("Investment", investmentSchema);
+export default Investment;

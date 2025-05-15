@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import { IPlan } from "./models.types";
 
 const planSchema = new Schema<IPlan>(
@@ -15,5 +15,6 @@ const planSchema = new Schema<IPlan>(
   { timestamps: true }
 );
 
-export const Plan =
+const Plan: Model<IPlan> =
   mongoose.models.Plan || mongoose.model<IPlan>("Plan", planSchema);
+export default Plan;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Plan } from "@/models/Plan";
+import Plan from "@/models/Plan";
 import connectToDatabase from "@/utils/mongodb";
 import fs from "fs/promises";
 import path from "path";

@@ -1,7 +1,7 @@
-import mongoose, { Schema } from "mongoose";
-import { IWithdrawalRequest } from "./models.types";
+import mongoose, { Model, Schema } from "mongoose";
+import { IWithdrawal } from "./models.types";
 
-const withdrawalSchema = new Schema<IWithdrawalRequest>(
+const withdrawalSchema = new Schema<IWithdrawal>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     accountName: { type: String, required: true },
@@ -16,4 +16,6 @@ const withdrawalSchema = new Schema<IWithdrawalRequest>(
   { timestamps: true }
 );
 
-export const Withdrawal = mongoose.models.Withdrawal || mongoose.model<IWithdrawalRequest>("Withdrawal", withdrawalSchema);
+const Withdrawal: Model<IWithdrawal> =
+  mongoose.models.Withdrawal || mongoose.model<IWithdrawal>("Withdrawal", withdrawalSchema);
+export default Withdrawal;

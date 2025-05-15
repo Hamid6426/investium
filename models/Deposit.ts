@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import { IDeposit } from "./models.types";
 
 const depositSchema = new mongoose.Schema<IDeposit>(
@@ -8,13 +8,16 @@ const depositSchema = new mongoose.Schema<IDeposit>(
     accountNumber: { type: String, required: true },
     amount: { type: Number, required: true },
     currency: { type: String, required: true },
-    proofImage: { type: String },
+    proofImage: { type: String, required: true },
     proofImageVerified: { type: Boolean, default: false },
     method: { type: String, enum: ["bank", "easypaisa", "jazzcash"], required: true },
     status: { type: String, enum: ["pending", "completed", "failed"], default: "pending" },
+    adminNotes: {type: String},
     modifiedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
 
-export const Deposit = mongoose.models.Deposit || mongoose.model<IDeposit>("Deposit", depositSchema);
+const Deposit: Model<IDeposit> =
+  mongoose.models.Deposit || mongoose.model<IDeposit>("Deposit", depositSchema);
+export default Deposit;
