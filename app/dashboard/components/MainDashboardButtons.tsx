@@ -1,0 +1,42 @@
+import Link from "next/link";
+import React from "react";
+import {
+  MdOutlineDownload,
+  MdOutlineRealEstateAgent,
+  MdSend,
+} from "react-icons/md";
+
+const buttons = [
+  {
+    href: "/dashboard/deposit",
+    icon: <MdOutlineDownload />,
+    text: "Deposit",
+  },
+  {
+    href: "/dashboard/real-estate",
+    icon: <MdOutlineRealEstateAgent />,
+    text: "Invest",
+  },
+  {
+    href: "/dashboard/send",
+    icon: <MdSend className="-rotate-45" />,
+    text: "Send",
+  },
+];
+
+export default function MainDashboardButtons() {
+  return (
+    <div className="grid grid-cols-3 max-w-lg place-items-center gap-4 text-3xl xs:text-4xl w-full">
+      {buttons.map((button, index) => (
+        <Link
+          key={index}
+          href={button.href}
+          className="flex flex-col items-center justify-center gap-1 xs:gap-3 border-border border w-full aspect-square rounded-2xl  hover:bg-accent transition  text-heading"
+        >
+          {button.icon}
+          <div className="text-xs xs:text-sm">{button.text}</div>
+        </Link>
+      ))}
+    </div>
+  );
+}

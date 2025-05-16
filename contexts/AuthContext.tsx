@@ -11,16 +11,12 @@ import axiosInstance from "@/utils/axiosInstance";
 
 interface AuthenticatedUser {
   _id: string;
-  email: string;
   name: string;
+  email: string;
+  phone: string;
   role: string;
-  phone: string | null;
-
-  isVerified: boolean;
-  verifiedAt: string | null;
-
   createdAt: string;
-  updatedAt: string;
+  isSecure: boolean;
 }
 
 interface AuthContextType {
@@ -30,6 +26,7 @@ interface AuthContextType {
   setCurrentUser: React.Dispatch<
     React.SetStateAction<AuthenticatedUser | null>
   >;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
   loadUserProfile: () => Promise<void>;
   token: string | null;
 }
@@ -60,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       console.log("Token before fetch:", localStorage.getItem("token"));
-      const res = await axiosInstance.get("/api/profile/get", {
+      const res = await axiosInstance.get("/api/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCurrentUser(res.data);
@@ -89,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         loadUserProfile,
         isUserLoading,
         token,
+        setToken,
       }}
     >
       {children}

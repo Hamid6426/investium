@@ -11,8 +11,8 @@ const ProfileCard: React.FC = () => {
             alt="Profile"
           />
           <div className="flex flex-col px-6 py-4">
-            <h2 className="text-xl font-semibold text-gray-800">John Doe</h2>
-            <p className="text-gray-600">Level - 1</p>
+            <h2 className="text-xl font-semibold text-heading">John Doe</h2>
+            <p className="text-paragraph">Level - 1</p>
           </div>
         </div>
         <div className="rounded-full h-20 w-20 flex flex-col justify-center items-center bg-background">

@@ -8,7 +8,7 @@ import Button from "@/components/shared/Button";
 import Link from "next/link";
 import Loader from "@/components/shared/Loader";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const SignIn = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const { loadUserProfile, setToken, currentUser } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,18 +31,17 @@ const SignIn = () => {
       const res = await axiosInstance.post("/api/auth/signin", formData);
 
       if (res.data.token) {
+        setToken(res.data.token);
         localStorage.setItem("token", res.data.token);
-
-        // Decode the token to get the role
-        const decoded: any = jwtDecode(res.data.token);
         toast.success(res.data.message || "Signed in successfully!");
 
-        // Navigate based on the role
-        if (decoded.role === "superadmin") {
-          router.push("/superadmin/dashboard");
-        } else if (decoded.role === "admin") {
+        await loadUserProfile();
+
+        const role = res.data.user?.role;
+
+        if (role === "admin") {
           router.push("/admin/dashboard");
-        } else if (decoded.role === "user") {
+        } else if (role === "user") {
           router.push("/dashboard");
         } else {
           toast.error("Invalid role.");
@@ -101,7 +101,7 @@ const SignIn = () => {
         </Button>
 
         <div className="text-sm text-center text-paragraph">
-          Don't have an account?{" "}
+          Don’t have an account?{" "}
           <Link href="/signup" className="text-primary hover:underline">
             Sign up
           </Link>
