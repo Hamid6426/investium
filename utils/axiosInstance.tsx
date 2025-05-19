@@ -11,7 +11,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (token) {
       config.headers = config.headers || {};
@@ -27,6 +28,19 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/signin"; // or use router.push if using Next.js router
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

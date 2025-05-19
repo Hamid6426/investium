@@ -1,43 +1,44 @@
 import Link from "next/link";
 import React from "react";
 import {
-  MdSchema,
-  MdOutlineRealEstateAgent,
-  MdDownload,
-  MdListAlt,
-  MdAccountBalanceWallet,
-} from "react-icons/md";
+  HiOutlineBanknotes,
+  HiOutlineDocumentText,
+  HiOutlineArrowDownCircle,
+  HiOutlineArrowUpRight,
+  HiOutlineBuildingOffice2,
+  HiOutlineClipboardDocumentList,
+} from "react-icons/hi2"; // Heroicons v2
 
 const buttons = [
   {
-    href: "/dashboard/schemas",
-    icon: <MdSchema />,
+    href: "/user/schemas",
+    icon: <HiOutlineClipboardDocumentList />,
     text: "Schemas",
   },
   {
-    href: "/dashboard/investments",
-    icon: <MdOutlineRealEstateAgent />,
-    text: "Investments",
+    href: "/user/deposit-logs",
+    icon: <HiOutlineDocumentText />,
+    text: "Transaction Logs",
   },
   {
-    href: "/dashboard/transactions",
-    icon: <MdListAlt />,
-    text: "Transactions",
+    href: "/user/withdrwal-logs",
+    icon: <HiOutlineArrowUpRight className="rotate-45" />,
+    text: "Withdrawal Logs",
   },
   {
-    href: "/dashboard/deposit",
-    icon: <MdDownload />,
+    href: "/user/deposit",
+    icon: <HiOutlineArrowDownCircle />,
     text: "Deposit",
   },
   {
-    href: "/dashboard/deposit-log",
-    icon: <MdListAlt />,
-    text: "Deposit Log",
+    href: "/user/investments",
+    icon: <HiOutlineBuildingOffice2 />,
+    text: "Investments",
   },
   {
-    href: "/dashboard/wallet-exchange",
-    icon: <MdAccountBalanceWallet />,
-    text: "Wallet Exchange",
+    href: "/user/withdrawals",
+    icon: <HiOutlineBanknotes className="rotate-45" />,
+    text: "Withdrawals",
   },
 ];
 

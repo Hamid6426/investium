@@ -1,26 +1,26 @@
 import Link from "next/link";
 import React from "react";
 import {
-  MdOutlineDownload,
-  MdOutlineRealEstateAgent,
-  MdSend,
-} from "react-icons/md";
+  HiOutlineArrowDownCircle,
+  HiOutlineBanknotes,
+  HiOutlineBuildingOffice2,
+} from "react-icons/hi2";
 
 const buttons = [
   {
-    href: "/dashboard/deposit",
-    icon: <MdOutlineDownload />,
+    href: "/user/deposit",
+    icon: <HiOutlineArrowDownCircle />,
     text: "Deposit",
   },
   {
-    href: "/dashboard/real-estate",
-    icon: <MdOutlineRealEstateAgent />,
-    text: "Invest",
+    href: "/user/investments",
+    icon: <HiOutlineBuildingOffice2 />,
+    text: "Investments",
   },
   {
-    href: "/dashboard/send",
-    icon: <MdSend className="-rotate-45" />,
-    text: "Send",
+    href: "/user/withdrawals",
+    icon: <HiOutlineBanknotes className="rotate-45" />,
+    text: "Withdrawals",
   },
 ];
 

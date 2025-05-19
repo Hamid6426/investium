@@ -9,13 +9,10 @@ export async function GET(req: NextRequest) {
   await connectToDatabase();
 
   try {
-    const decodedUser = getUserFromRequest(req);
+    const decodedUser = await getUserFromRequest(req);
 
-    if (decodedUser.role !== "admin" && decodedUser.role !== "superadmin") {
-      return NextResponse.json(
-        { error: "Not allowed to create plan" },
-        { status: 401 }
-      );
+    if (!decodedUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await User.findById(decodedUser.id).select(
@@ -26,7 +23,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({ user });
   } catch (error) {
     return NextResponse.json(
       { error: "Invalid or expired token" },

@@ -1,52 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import Input from "@/components/shared/Input";
 import Button from "@/components/shared/Button";
-import Link from "next/link";
 import Loader from "@/components/shared/Loader";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 const SignIn = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-  const { loadUserProfile, setToken, currentUser } = useAuth();
 
+  const router = useRouter();
+  const { login, user } = useAuth();
+
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     try {
-      const res = await axiosInstance.post("/api/auth/signin", formData);
-
-      if (res.data.token) {
-        setToken(res.data.token);
-        localStorage.setItem("token", res.data.token);
-        toast.success(res.data.message || "Signed in successfully!");
-
-        await loadUserProfile();
-
-        const role = res.data.user?.role;
-
-        if (role === "admin") {
-          router.push("/admin/dashboard");
-        } else if (role === "user") {
-          router.push("/dashboard");
-        } else {
-          toast.error("Invalid role.");
-        }
-      }
+      const loggedInUser = await login(formData);
+      toast.success("Signed in successfully!");
+      router.push(
+        loggedInUser.role === "admin" ? "/admin/dashboard" : "/dashboard"
+      );
     } catch (err: any) {
       const errorMsg =
         err.response?.data?.error ||
@@ -87,6 +74,7 @@ const SignIn = () => {
           onChange={handleChange}
           required
         />
+
         <div className="text-sm text-right text-paragraph">
           <Link
             href="/forgot-password"
@@ -96,7 +84,7 @@ const SignIn = () => {
           </Link>
         </div>
 
-        <Button type="submit">
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? <Loader className="w-6 h-6 mx-auto" /> : "Sign in"}
         </Button>
 
