@@ -8,36 +8,59 @@ import Link from "next/link";
 import Input from "@/components/shared/Input";
 import Button from "@/components/shared/Button";
 import Loader from "@/components/shared/Loader";
-import { useAuth } from "@/contexts/AuthContext";
+import axiosInstance from "@/utils/axiosInstance";
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 const SignIn = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    password: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
-  const { login, user } = useAuth();
 
-  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const loggedInUser = await login(formData);
-      toast.success("Signed in successfully!");
-      router.push(
-        loggedInUser.role === "admin" ? "/admin/dashboard" : "/dashboard"
-      );
+      const response = await axiosInstance.post("/api/auth/signin", formData);
+
+      const { message, token } = response.data;
+
+      if (!token) {
+        throw new Error("Token not found in response");
+      }
+
+      const decoded = JSON.parse(atob(token.split(".")[1]));
+      const userRole = decoded.role || "user";
+
+      localStorage.setItem("authToken", token);
+      toast.success(message || "Signed in successfully!");
+
+      router.push(userRole === "admin" ? "/admin/dashboard" : "/dashboard");
     } catch (err: any) {
+      console.error("Login error:", err);
       const errorMsg =
         err.response?.data?.error ||
         err.response?.data?.message ||
+        err.message ||
         "Login failed.";
       toast.error(errorMsg);
     } finally {
@@ -63,6 +86,8 @@ const SignIn = () => {
           value={formData.email}
           onChange={handleChange}
           required
+          autoFocus
+          disabled={isSubmitting}
         />
 
         <Input
@@ -73,6 +98,7 @@ const SignIn = () => {
           value={formData.password}
           onChange={handleChange}
           required
+          disabled={isSubmitting}
         />
 
         <div className="text-sm text-right text-paragraph">

@@ -8,19 +8,19 @@ import {
 
 const buttons = [
   {
-    href: "/user/deposit",
+    href: "/dashboard/deposit",
     icon: <HiOutlineArrowDownCircle />,
     text: "Deposit",
   },
   {
-    href: "/user/investments",
+    href: "/dashboard/investments",
     icon: <HiOutlineBuildingOffice2 />,
     text: "Investments",
   },
   {
-    href: "/user/withdrawals",
+    href: "/dashboard/withdrawal",
     icon: <HiOutlineBanknotes className="rotate-45" />,
-    text: "Withdrawals",
+    text: "Withdrawal",
   },
 ];
 

@@ -4,8 +4,8 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 const axiosInstance = axios.create({
   baseURL: isDevelopment
-    ? "http://localhost:3000" // Local dev server
-    : process.env.NEXT_PUBLIC_API_BASE_URL, // Production API URL
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000,
 });
 
@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // Set Content-Type to JSON only if data is not FormData
+    // Set Content-Type if not FormData
     if (config.data && !(config.data instanceof FormData)) {
       config.headers = config.headers || {};
       config.headers["Content-Type"] = "application/json";
@@ -30,15 +30,18 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Don't remove token automatically on 401
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // Optional: only redirect or show message
       if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        window.location.href = "/signin"; // or use router.push if using Next.js router
+        // You can toast here or redirect, but DON'T remove the token
+        // window.location.href = "/signin"; // Optional
       }
     }
+
     return Promise.reject(error);
   }
 );

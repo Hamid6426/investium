@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import Image from "next/image";
-import { useAuth } from "@/contexts/AuthContext";
 import { FaCamera } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axiosInstance from "@/utils/axiosInstance";
@@ -11,11 +10,30 @@ interface UploadProfilePictureProps {
   onUploadSuccess?: (imageUrl: string) => void;
 }
 
-const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ onUploadSuccess }) => {
-  const { currentUser } = useAuth();
-  const [previewUrl, setPreviewUrl] = useState<string>(currentUser?.profilePicture || "");
+const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({
+  onUploadSuccess,
+}) => {
+  const [user, setUser] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data } = await axiosInstance.get("/api/profile");
+        setUser(data);
+        setPreviewUrl(data?.profilePicture || "");
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Failed to load profile.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -37,11 +55,12 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ onUploadSuc
     setPreviewUrl(objectUrl);
     handleUpload(file);
 
+    // Cleanup URL after usage
     return () => URL.revokeObjectURL(objectUrl);
   };
 
   const handleUpload = async (file: File) => {
-    if (!currentUser) {
+    if (!user) {
       toast.error("You must be logged in to upload a profile picture");
       return;
     }
@@ -51,22 +70,24 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ onUploadSuc
     formData.append("profilePicture", file);
 
     try {
-      const { data } = await axiosInstance.patch("/api/profile/upload-profile-picture", formData);
+      const { data } = await axiosInstance.patch(
+        "/api/profile/upload-profile-picture",
+        formData
+      );
 
       toast.success("Profile picture updated successfully");
+      setUser((prev: any) => ({ ...prev, profilePicture: data.profilePicture }));
       onUploadSuccess?.(data.profilePicture);
     } catch (error: any) {
       console.error("Error uploading profile picture:", error);
-      toast.error(error.response?.data?.error || "Failed to upload profile picture");
-      setPreviewUrl(currentUser?.profilePicture || "");
+      toast.error(
+        error.response?.data?.error || "Failed to upload profile picture"
+      );
+      setPreviewUrl(user?.profilePicture || "");
     } finally {
       setIsUploading(false);
     }
   };
-
-  useEffect(() => {
-    setPreviewUrl(currentUser?.profilePicture || "");
-  }, [currentUser?.profilePicture]);
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
@@ -88,7 +109,7 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ onUploadSuc
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-200">
               <span className="text-gray-400 text-4xl">
-                {currentUser?.name?.[0]?.toUpperCase() || "?"}
+                {user?.name?.[0]?.toUpperCase() || "?"}
               </span>
             </div>
           )}

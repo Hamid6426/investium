@@ -15,7 +15,9 @@ const DashboardNavbar: React.FC = () => {
       <div className="flex items-center space-x-4">
         <ThemeToggle />
         <MdNotifications className="text-2xl cursor-pointer" />
-        <MdPerson className="text-2xl cursor-pointer" />
+        <Link href="/dashboard/profile">
+          <MdPerson className="text-2xl cursor-pointer" />
+        </Link>
       </div>
     </nav>
   );

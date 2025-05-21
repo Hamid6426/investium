@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const user = await User.findById(decodedUser.id).select(
-      "_id name email phone role createdAt"
+      "_id name email phone role createdAt image walletBalance"
     );
 
     if (!user) {
