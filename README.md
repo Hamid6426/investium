@@ -1,37 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Investium
 
-## Getting Started
+## Overview
+Brief description of the system (e.g., "A user investment and wallet management platform").
 
-First, run the development server:
+## Features
+- User registration & referral system
+- Investment plans with returns
+- Secure deposits and withdrawals
+- Admin control for transactions
 
-```bash
+## Tech Stack
+- Node.js + Express
+- MongoDB (Mongoose ODM)
+- Typescript
+- [Other tools/frameworks if applicable]
+
+## Folder Structure
+
+
+├── app/
+
+├── models/
+│   └── models.types.ts  # Contains all Mongoose types
+├── routes/
+├── controllers/
+├── services/
+├── utils/
+└── ...
+
+## Security Practices
+- Passwords and sensitive data are hashed
+- Role-based access control
+- Proof image verification system
+
+## Run Locally
+```
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
+## Environment Variables
+```
+NEXT_PUBLIC_URL="http://localhost:3000"
+JWT_SECRET="jwtsecret12345"
+NEXT_PUBLIC_VAPID_PUBLIC_KEY="vapidpublickey12345"
+VAPID_PRIVATE_KEY="-vapidkey12345"
+MONGO_URI="mongodb+srv://hamid6426:<password/>@cluster0.jb1ci76.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+```
