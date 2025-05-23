@@ -24,7 +24,7 @@ const UserInvestments = () => {
   useEffect(() => {
     const fetchInvestments = async () => {
       try {
-        const res = await axiosInstance.get("/api/investment");
+        const res = await axiosInstance.get("/investment");
         setInvestments(res.data);
       } catch (err) {
         console.error("Failed to fetch investments", err);
@@ -35,6 +35,12 @@ const UserInvestments = () => {
 
     fetchInvestments();
   }, []);
+
+  const calculateDayNumber = (startDate: string) => {
+    const start = new Date(startDate).getTime();
+    const now = Date.now();
+    return Math.max(1, Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1);
+  };
 
   if (loading) {
     return (
@@ -49,7 +55,9 @@ const UserInvestments = () => {
       <h1 className="text-2xl font-bold mb-6">Your Investments</h1>
 
       {investments.length === 0 ? (
-        <p className="text-lg text-paragraph">You have no active investments.</p>
+        <p className="text-lg text-paragraph">
+          You have no active investments.
+        </p>
       ) : (
         <div className="space-y-4">
           {investments.map((inv) => (
@@ -75,7 +83,7 @@ const UserInvestments = () => {
                 <p>{new Date(inv.startDate).toLocaleDateString()}</p>
 
                 <p>Current Day:</p>
-                <p>{inv.currentDay}</p>
+                <p className="">{calculateDayNumber(inv.startDate)}</p>
 
                 <p>Total Periods:</p>
                 <p>{inv.planId.totalPeriods}</p>

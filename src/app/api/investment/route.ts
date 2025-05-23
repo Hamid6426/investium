@@ -55,3 +55,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    await connectToDatabase();
+
+    const userId = getUserFromRequest(req).id;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const investments = await Investment.find({ userId }).populate(
+      "planId"
+    );
+
+    return NextResponse.json(investments, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

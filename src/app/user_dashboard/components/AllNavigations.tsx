@@ -11,6 +11,21 @@ import {
 
 const buttons = [
   {
+    href: "/user_dashboard/deposit",
+    icon: <HiOutlineArrowDownCircle />,
+    text: "Deposit",
+  },
+  {
+    href: "/user_dashboard/investments",
+    icon: <HiOutlineBuildingOffice2 />,
+    text: "Investments",
+  },
+  {
+    href: "/user_dashboard/withdrawal",
+    icon: <HiOutlineBanknotes className="rotate-45" />,
+    text: "Withdrawal",
+  },
+  {
     href: "/user_dashboard/schemas",
     icon: <HiOutlineClipboardDocumentList />,
     text: "Schemas",
@@ -24,21 +39,6 @@ const buttons = [
     href: "/user_dashboard/withdrwal-logs",
     icon: <HiOutlineArrowUpRight className="rotate-45" />,
     text: "Withdrawal Logs",
-  },
-  {
-    href: "/user_dashboard/deposit",
-    icon: <HiOutlineArrowDownCircle />,
-    text: "Deposit",
-  },
-  {
-    href: "/user_dashboard/investments",
-    icon: <HiOutlineBuildingOffice2 />,
-    text: "Investments",
-  },
-  {
-    href: "/user_dashboard/withdrawals",
-    icon: <HiOutlineBanknotes className="rotate-45" />,
-    text: "Withdrawals",
   },
 ];
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import axiosInstance from "@/utils/axiosInstance";
 import Loader from "@/components/shared/Loader";
@@ -24,11 +23,6 @@ type Plan = {
   totalRevenue?: number;
   capitalReturn?: boolean;
   returnType?: string;
-};
-
-type InvestmentPayload = {
-  planId: string;
-  quantity: number;
 };
 
 const GetAllPlansForUser = () => {
@@ -104,7 +98,7 @@ const GetAllPlansForUser = () => {
 
   return (
     <main className="max-w-lg w-full mx-auto pb-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
+      <div className="grid grid-cols-1 gap-6 ">
         {plans.map((plan, idx) => (
           <div
             key={plan._id}

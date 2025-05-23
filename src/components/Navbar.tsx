@@ -37,7 +37,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-card shadow-soft fixed top-0 w-full z-50">
+    <header className="bg-card shadow-soft fixed top-0 w-full z-50 border-b border-accent">
       <nav className="h-16 px-3 lg:px-6 flex justify-between items-center">
         <Link
           href="/"
@@ -45,10 +45,10 @@ export default function Navbar() {
         >
           INVESTIUM
         </Link>
-        <div className="flex gap-2 sm:gap-4 items-center">
+        <div className="flex gap-4 items-center">
           <ThemeToggle />
           {isLoggedIn && user ? (
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-4">
               <Link
                 href={getDashboardRoute(user.role)}
                 className="hidden sm:block bg-primary text-white hover:bg-accent text-sm px-4 py-2 rounded-md transition"
@@ -68,7 +68,7 @@ export default function Navbar() {
               >
                 Logout
               </button>
-              <button onClick={logout} className="cursor-pointer flex items-center sm:hidden">
+              <button onClick={logout} className="text-error hover:bg-red-600 cursor-pointer flex items-center sm:hidden">
                 <MdLogout size={24} />
               </button>
             </div>

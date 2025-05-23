@@ -2,9 +2,9 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="w-full pt-24 px-6 bg-background">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="px-4 py-2 bg-[#FFFFFF20] dark:[#00000040] mb-4 text-heading max-w-xs font-semibold mx-auto">
+    <section className="w-full pt-24 px-3 bg-background">
+      <div className="max-w-3xl mx-auto text-center">
+        <h2 className="px-4 py-2 bg-[#00000020]  mb-4 text-heading max-w-xs font-semibold mx-auto">
           Smart Choices, Wealthy Tomrrow
         </h2>
         <h1 className="text-4xl font-extrabold text-heading mb-4">
