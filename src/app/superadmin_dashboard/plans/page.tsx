@@ -32,7 +32,7 @@ const GetAllPlans = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const res = await axiosInstance.get("/api/plans");
+        const res = await axiosInstance.get("/plans");
         setPlans(res.data);
       } catch (error) {
         console.error("Failed to fetch plans", error);
@@ -54,37 +54,39 @@ const GetAllPlans = () => {
 
   if (plans.length === 0) {
     return (
-      <div className="flex justify-between items-center mb-6 w-full p-6">
-        <p className="text-3xl font-bold text-heading text-center">
-          No plans found.
-        </p>{" "}
-        <Link
-          href="/admin/plans/create-plan"
-          className="py-2 px-4 bg-card border border-border hover:bg-accent"
-        >
-          Create New Plan
-        </Link>
-      </div>
+      <main className="max-w-3xl mx-auto p-4 w-full">
+        <div className="flex justify-between mb-6 w-full">
+          <p className="text-3xl font-bold text-heading text-center">
+            No plans found.
+          </p>{" "}
+          <Link
+            href="/admin_dashboard/plans/create-plan"
+            className="py-2 px-4 bg-card border border-border hover:bg-accent"
+          >
+            Create New Plan
+          </Link>
+        </div>
+      </main>
     );
   }
 
   return (
-    <main className="max-w-5xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
+    <main className="max-w-3xl mx-auto p-4 w-full">
+      <div className="flex justify-between items-center mb-6 w-full">
         <h1 className="text-3xl font-bold text-heading">
           All Investment Plans
         </h1>
         <Link
-          href="/admin/plans/create-plan"
+          href="/admin_dashboard/plans/create-plan"
           className="py-2 px-4 bg-card border border-border hover:bg-accent"
         >
           Create New Plan
         </Link>
       </div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+      <div className="max-w-3xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
         {plans.map((plan, idx) => (
-          <div key={plan._id} className="rounded-lg shadow-md py-6 text-left">
+          <div key={plan._id} className="rounded-lg shadow-md p-6 text-left border border-accent">
             {plan.image && (
               <div className="relative w-full h-48 mb-4 rounded-md overflow-hidden">
                 <Image

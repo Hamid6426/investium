@@ -38,7 +38,7 @@ const UpdatePlan = () => {
     const fetchPlan = async () => {
       try {
         setLoading(true);
-        const { data } = await axiosInstance.get(`/api/plans/${planId}`);
+        const { data } = await axiosInstance.get(`/plans/${planId}`);
         setForm({
           name: data.name,
           description: data.description,

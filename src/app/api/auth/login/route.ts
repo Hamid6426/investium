@@ -7,7 +7,7 @@ import { loginAttemptsLimiter } from "@/middlewares/rateLimiters";
 
 export async function POST(req: NextRequest) {
   try {
-    // await loginAttemptsLimiter(req);
+    await loginAttemptsLimiter(req);
 
     const { email, password } = await req.json();
     if (!email || !password) {

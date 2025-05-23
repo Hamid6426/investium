@@ -7,7 +7,6 @@ import Loader from "@/components/shared/Loader";
 type Investment = {
   _id: string;
   quantity: number;
-  currentDay: number;
   startDate: string;
   planId: {
     name: string;
@@ -21,7 +20,7 @@ type Investment = {
   };
 };
 
-const AllInvestmentsAdmin = () => {
+const AllInvestmentsListForAdmin = () => {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +39,12 @@ const AllInvestmentsAdmin = () => {
     fetchAll();
   }, []);
 
+  const calculateDayNumber = (startDate: string) => {
+    const start = new Date(startDate).getTime();
+    const now = Date.now();
+    return Math.max(1, Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-10">
@@ -49,53 +54,44 @@ const AllInvestmentsAdmin = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">All User Investments</h1>
-
-      {investments.length === 0 ? (
-        <p>No investments found.</p>
-      ) : (
-        <div className="space-y-6">
-          {investments.map((inv) => (
-            <div
-              key={inv._id}
-              className="p-4 border border-border bg-card rounded-md shadow"
-            >
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                <div>
-                  <span className="font-semibold">User:</span> {inv.userId.name}
-                </div>
-                <div>
-                  <span className="font-semibold">Email:</span> {inv.userId.email}
-                </div>
-                <div>
-                  <span className="font-semibold">Wallet:</span> {inv.userId.walletBalance}
-                </div>
-                <div>
-                  <span className="font-semibold">Plan:</span> {inv.planId.name}
-                </div>
-                <div>
-                  <span className="font-semibold">Quantity:</span> {inv.quantity}
-                </div>
-                <div>
-                  <span className="font-semibold">Base:</span> {inv.planId.baseInvestedAmount}
-                </div>
-                <div>
-                  <span className="font-semibold">Daily Return:</span> {inv.planId.dailyReturned}
-                </div>
-                <div>
-                  <span className="font-semibold">Current Day:</span> {inv.currentDay}
-                </div>
-                <div>
-                  <span className="font-semibold">Start:</span> {new Date(inv.startDate).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+    <div className="p-6 bg-background min-h-screen text-paragraph">
+      <h1 className="text-2xl font-bold mb-4 text-heading">All User Investments</h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-card border border-border text-sm">
+          <thead>
+            <tr className="bg-secondary text-heading">
+              <th className="py-2 px-4 border-b border-border">User</th>
+              <th className="py-2 px-4 border-b border-border">Email</th>
+              <th className="py-2 px-4 border-b border-border">Wallet</th>
+              <th className="py-2 px-4 border-b border-border">Plan</th>
+              <th className="py-2 px-4 border-b border-border">Quantity</th>
+              <th className="py-2 px-4 border-b border-border">Base Amount</th>
+              <th className="py-2 px-4 border-b border-border">Daily Return</th>
+              <th className="py-2 px-4 border-b border-border">Day No</th>
+              <th className="py-2 px-4 border-b border-border">Start Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {investments.map((inv) => (
+              <tr key={inv._id} className="text-center hover:bg-secondary/40 transition">
+                <td className="py-2 px-4 border-b border-border">{inv.userId.name}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.userId.email}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.userId.walletBalance}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.planId.name}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.quantity}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.planId.baseInvestedAmount}</td>
+                <td className="py-2 px-4 border-b border-border">{inv.planId.dailyReturned}</td>
+                <td className="py-2 px-4 border-b border-border">{calculateDayNumber(inv.startDate)}</td>
+                <td className="py-2 px-4 border-b border-border">
+                  {new Date(inv.startDate).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 
-export default AllInvestmentsAdmin;
+export default AllInvestmentsListForAdmin;

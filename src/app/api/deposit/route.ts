@@ -64,9 +64,9 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
-    const plans = await Deposit.find();
+    const deposits = await Deposit.find();
 
-    return NextResponse.json(plans, { status: 200 });
+    return NextResponse.json(deposits, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

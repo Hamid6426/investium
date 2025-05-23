@@ -5,6 +5,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import Loader from "@/components/shared/Loader";
 import Button from "@/components/shared/Button";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 interface Deposit {
   _id: string;
@@ -17,6 +18,7 @@ interface Deposit {
   proofImage: string;
   status: "pending" | "completed" | "failed";
   adminNotes?: string;
+  createdAt: string;
 }
 
 export default function RecentDeposits() {
@@ -33,8 +35,14 @@ export default function RecentDeposits() {
   async function fetchDeposits() {
     setLoading(true);
     try {
-      const res = await axiosInstance.get("/api/deposit");
-      setDeposits(res.data);
+      const res = await axiosInstance.get("/deposit");
+
+      const sortedDeposits = res.data.sort(
+        (a: Deposit, b: Deposit) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setDeposits(sortedDeposits);
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to fetch deposits");
     } finally {
@@ -45,7 +53,7 @@ export default function RecentDeposits() {
   async function approveDeposit(id: string) {
     setProcessingId(id);
     try {
-      await axiosInstance.put(`/api/deposit/${id}/accept-deposit`);
+      await axiosInstance.put(`/deposit/${id}/accept-deposit`);
       toast.success("Deposit approved");
       // Refresh list
       await fetchDeposits();
@@ -64,7 +72,7 @@ export default function RecentDeposits() {
 
     setProcessingId(id);
     try {
-      await axiosInstance.put(`/api/deposit/${id}/reject-deposit`, { adminNotes });
+      await axiosInstance.put(`/deposit/${id}/reject-deposit`, { adminNotes });
       toast.success("Deposit rejected");
       setAdminNotes("");
       setRejectingId(null);
@@ -78,13 +86,13 @@ export default function RecentDeposits() {
 
   if (loading)
     return (
-      <div className="flex justify-center py-20">
+      <div className="flex items-center justify-center w-full">
         <Loader className="w-10 h-10" />
       </div>
     );
 
   return (
-    <main className="mx-auto p-4">
+    <main className="mx-auto p-4 w-full">
       <h1 className="text-3xl font-bold mb-6 text-heading text-center">
         Recent Deposits
       </h1>
@@ -92,23 +100,25 @@ export default function RecentDeposits() {
       {deposits.length === 0 ? (
         <p className="text-center text-paragraph">No deposits found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 max-w-[60rem] mx-auto gap-8 w-full">
           {deposits.map((deposit) => (
             <div
               key={deposit._id}
-              className="max-w-sm mx-auto border rounded-lg shadow-sm bg-card overflow-hidden flex flex-col"
+              className="border rounded-lg shadow-sm bg-card overflow-hidden flex flex-col w-full mx-auto"
             >
               {/* Image on top */}
               {deposit.proofImage && (
-                <img
+                <Image
                   src={deposit.proofImage}
+                  width={500} 
+                  height={400}
                   alt="Proof"
                   className="w-full h-48 object-cover"
                 />
               )}
 
               {/* Text content */}
-              <div className="p-4 flex flex-col flex-grow">
+              <div className="p-4 flex flex-col flex-grow w-full">
                 <p className="font-semibold text-xl text-heading mb-1">
                   {deposit.accountName}
                 </p>
@@ -143,11 +153,11 @@ export default function RecentDeposits() {
 
                 {/* Action buttons container */}
                 {deposit.status === "pending" && (
-                  <div className="mt-auto flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
+                  <div className="mt-auto flex w-full flex-col gap-4">
                     <Button
                       onClick={() => approveDeposit(deposit._id)}
                       disabled={processingId === deposit._id}
-                      className="bg-green-600 px-2 py-1 hover:bg-green-700"
+                      className="bg-green-600 py-1 w-full hover:bg-green-700"
                     >
                       {processingId === deposit._id ? (
                         <Loader className="w-5 h-5 mx-auto" />
@@ -157,7 +167,7 @@ export default function RecentDeposits() {
                     </Button>
 
                     {rejectingId === deposit._id ? (
-                      <div className="flex flex-col space-y-2 flex-grow">
+                      <div className="flex flex-col space-y-2 flex-grow w-full">
                         <textarea
                           value={adminNotes}
                           onChange={(e) => setAdminNotes(e.target.value)}
@@ -169,7 +179,7 @@ export default function RecentDeposits() {
                           <Button
                             onClick={() => rejectDeposit(deposit._id)}
                             disabled={processingId === deposit._id}
-                            className="bg-red-600  hover:bg-red-700"
+                            className="bg-red-600 px-3 py-1 hover:bg-red-700"
                           >
                             {processingId === deposit._id ? (
                               <Loader className="w-5 h-5 mx-auto" />
@@ -182,7 +192,7 @@ export default function RecentDeposits() {
                               setRejectingId(null);
                               setAdminNotes("");
                             }}
-                            className="bg-gray-400 hover:bg-gray-500"
+                            className="bg-gray-400 px-3 py-1 hover:bg-gray-500"
                           >
                             Cancel
                           </Button>
@@ -191,7 +201,7 @@ export default function RecentDeposits() {
                     ) : (
                       <Button
                         onClick={() => setRejectingId(deposit._id)}
-                        className="bg-red-600 px-2 py-1 hover:bg-red-700"
+                        className="bg-red-600 px-3 py-1 hover:bg-red-700"
                       >
                         Reject
                       </Button>

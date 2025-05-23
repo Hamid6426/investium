@@ -22,7 +22,7 @@ export default function UserLayoutGuardWrapper({
     if (!isLoggedIn) {
       router.replace("/login");
     } else if (user?.role !== "user") {
-      router.replace("/401");
+      router.replace("/error/401");
     }
   }, [isLoggedIn, user, router]);
 

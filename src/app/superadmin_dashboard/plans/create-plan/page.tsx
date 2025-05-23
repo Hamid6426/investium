@@ -72,7 +72,7 @@ const CreatePlan = () => {
 
       if (file) data.append("image", file);
 
-      const res = await axiosInstance.post("/api/plans", data);
+      const res = await axiosInstance.post("/plans", data);
 
       toast.success("Plan created successfully!");
       router.refresh(); // refresh to update if on same page or redirect as needed

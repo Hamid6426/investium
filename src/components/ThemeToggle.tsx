@@ -45,7 +45,7 @@ export default function ThemeToggle() {
  
        <button
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="transition-colors flex flex-col justify-center items-center p-2 cursor-pointer duration-300 text-paragraph"
+        className="transition-colors flex flex-col justify-center items-center cursor-pointer duration-300 text-paragraph"
       >
         <div>
           {isDark ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}

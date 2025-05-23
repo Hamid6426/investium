@@ -8,17 +8,19 @@ import Withdrawal from "@/models/Withdrawal";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { withdrawalId: string } }
+  { params }: { params: Promise<{ withdrawalId: string }> }
 ) {
   try {
     await connectToDatabase();
+    const { withdrawalId } = await params;
+
     const decodedAdmin = getUserFromRequest(req);
     if (!decodedAdmin || !["admin", "superadmin"].includes(decodedAdmin.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { adminNotes } = await req.json();
-    const withdrawal = await Withdrawal.findById(params.withdrawalId);
+    const withdrawal = await Withdrawal.findById(withdrawalId);
 
     if (!withdrawal || withdrawal.status !== "pending") {
       return NextResponse.json(

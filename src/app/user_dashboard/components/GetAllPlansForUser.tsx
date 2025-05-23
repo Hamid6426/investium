@@ -108,10 +108,10 @@ const GetAllPlansForUser = () => {
         {plans.map((plan, idx) => (
           <div
             key={plan._id}
-            className="border border-accent rounded-lg shadow-md pb-6 text-left"
+            className="border border-accent p-4 rounded-lg shadow-md pb-6 text-left"
           >
             {plan.image && (
-              <div className="relative w-full mb-4 rounded-md overflow-hidden">
+              <div className="relative w-full mb-4 rounded-md overflow-hidden aspect-[16/9]">
                 <Image
                   src={plan.image}
                   alt={plan.name}
@@ -123,8 +123,8 @@ const GetAllPlansForUser = () => {
               </div>
             )}
 
-            <div className="px-4">
-              <h3 className="px-3 py-2 text-lg font-bold mb-2 text-heading bg-card rounded-md">
+            <div className="">
+              <h3 className=" py-2 text-lg font-bold mb-2 text-heading bg-card rounded-md">
                 {plan.name}
               </h3>
               <div className="grid grid-cols-2 gap-y-2 text-sm font-medium text-paragraph">

@@ -1,15 +1,9 @@
-"use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
 
-const AdminPage = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/admin/dashboard");
-  }, [router]);
-
-  return null;
-};
-
-export default AdminPage;
+export default function AdminDashboardOverview() {
+  return (
+    <div className="flex items-center justify-center w-full">
+      Admin Dashboard Overview
+    </div>
+  );
+}

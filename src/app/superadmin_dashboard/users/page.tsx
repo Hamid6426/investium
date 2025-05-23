@@ -24,7 +24,7 @@ const GetAllUser = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get("/api/users");
+        const response = await axiosInstance.get("/users");
         setUsers(response.data.users);
       } catch (err: any) {
         console.error("Error fetching users:", err);
@@ -52,9 +52,7 @@ const GetAllUser = () => {
               <th className="py-2 px-4 border-b border-border">Email</th>
               <th className="py-2 px-4 border-b border-border">Phone</th>
               <th className="py-2 px-4 border-b border-border">Role</th>
-              <th className="py-2 px-4 border-b border-border">Agreed</th>
-              <th className="py-2 px-4 border-b border-border">Verified</th>
-              <th className="py-2 px-4 border-b border-border">Blocked</th>
+              <th className="py-2 px-4 border-b border-border">Agree To Terms</th>
               <th className="py-2 px-4 border-b border-border">Created</th>
             </tr>
           </thead>
@@ -78,24 +76,6 @@ const GetAllUser = () => {
                 </td>
                 <td className="py-2 px-4 border-b border-border">
                   {user.agreedToTerms ? "✅" : "❌"}
-                </td>
-                <td className="py-2 px-4 border-b border-border">
-                  <VerifyUserActions
-                    userId={user._id}
-                    isVerified={user.isVerified}
-                    onActionComplete={() => {
-                      // Refresh the user list after action
-                      setLoading(true);
-                      axiosInstance.get("/api/users").then((res) => {
-                        setUsers(res.data.users);
-                        setLoading(false);
-                      });
-                    }}
-                  />
-                </td>
-
-                <td className="py-2 px-4 border-b border-border">
-                  {user.isBlocked ? "❌" : "✅"}
                 </td>
                 <td className="py-2 px-4 border-b border-border">
                   {new Date(user.createdAt).toLocaleDateString()}

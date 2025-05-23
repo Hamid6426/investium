@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { MdDashboard, MdLogout } from "react-icons/md";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -31,7 +32,7 @@ export default function Navbar() {
       case "user":
         return `/${role}_dashboard`;
       default:
-        return "/404"; // fallback for unknown roles
+        return "/error/404"; // fallback for unknown roles
     }
   };
 
@@ -40,25 +41,35 @@ export default function Navbar() {
       <nav className="h-16 px-3 lg:px-6 flex justify-between items-center">
         <Link
           href="/"
-          className="font-bold text-2xl text-primary hover:text-accent"
+          className="font-bold text-xl sm:text-2xl text-primary hover:text-accent"
         >
           INVESTIUM
         </Link>
-        <div className="flex gap-3 lg:gap-4 items-center">
+        <div className="flex gap-2 sm:gap-4 items-center">
           <ThemeToggle />
           {isLoggedIn && user ? (
-            <div>
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 href={getDashboardRoute(user.role)}
-                className="bg-primary text-white hover:bg-accent text-sm px-4 py-2 rounded-md transition"
+                className="hidden sm:block bg-primary text-white hover:bg-accent text-sm px-4 py-2 rounded-md transition"
               >
                 Dashboard
               </Link>
+              <Link
+                href={getDashboardRoute(user.role)}
+                className="flex items-center sm:hidden"
+              >
+                <MdDashboard size={24} />
+              </Link>
+
               <button
                 onClick={logout}
-                className="text-sm ml-4 bg-error text-white hover:bg-red-600 px-4 py-2 rounded-md transition"
+                className="hidden sm:block text-sm bg-error text-white hover:bg-red-600 px-4 py-2 rounded-md transition"
               >
                 Logout
+              </button>
+              <button onClick={logout} className="cursor-pointer flex items-center sm:hidden">
+                <MdLogout size={24} />
               </button>
             </div>
           ) : (

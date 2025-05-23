@@ -5,13 +5,13 @@ import React from "react";
 
 // Navigation links as an array
 const adminLinks = [
-  { href: "/admin_dashboard", label: "Dashboard" },
+  // { href: "/admin_dashboard", label: "Dashboard" },
   { href: "/admin_dashboard/users", label: "Users" },
   { href: "/admin_dashboard/plans", label: "Plans" },
   { href: "/admin_dashboard/deposits", label: "Deposits" },
   { href: "/admin_dashboard/investments", label: "Investments" },
   { href: "/admin_dashboard/withdrawals", label: "Withdrawals" },
-  { href: "/admin_dashboard/settings", label: "Settings" },
+  // { href: "/admin_dashboard/settings", label: "Settings" },
 ];
 
 export default function AdminNavbar() {
